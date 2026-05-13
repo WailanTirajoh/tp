@@ -48,20 +48,20 @@ mod tests {
 
         // Check that users table exists
         let table_exists = diesel::dsl::sql::<diesel::sql_types::BigInt>(
-            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='users'"
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='users'",
         )
         .get_result::<i64>(&mut *conn)
         .unwrap();
-        
+
         assert_eq!(table_exists, 1);
 
         // Check that audit_logs table exists
         let table_exists = diesel::dsl::sql::<diesel::sql_types::BigInt>(
-            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='audit_logs'"
+            "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='audit_logs'",
         )
         .get_result::<i64>(&mut *conn)
         .unwrap();
-        
+
         assert_eq!(table_exists, 1);
     }
 }
