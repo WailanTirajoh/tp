@@ -136,6 +136,129 @@ This will:
 pnpm tauri build
 ```
 
+## CI/CD - GitHub Actions
+
+This project includes automated build workflows for multiple platforms.
+
+### Build Workflow (`.github/workflows/build.yml`)
+
+Automatically builds the app on every push to `main` or `develop` branches.
+
+**Supported Platforms:**
+- ✅ Windows (x86_64) - `.msi` and `.exe` installers
+- ✅ macOS (Apple Silicon & Intel) - `.dmg` installer
+- ✅ Linux (x86_64) - `.deb` and `.AppImage`
+- ✅ Android - `.apk` and `.aab`
+
+**Artifacts:** Build artifacts are uploaded and available for download from the Actions tab for 90 days.
+
+### Release Workflow (`.github/workflows/release.yml`)
+
+Creates GitHub releases with all platform builds attached.
+
+**How to Create a Release:**
+
+1. **Using Git Tags:**
+   ```bash
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
+
+2. **Manual Trigger:**
+   - Go to Actions → Release Build → Run workflow
+   - Enter version number (e.g., `1.0.0`)
+   - Click "Run workflow"
+
+**Release Assets:**
+- Windows: `noken-pos_1.0.0_x64.msi`, `noken-pos_1.0.0_x64-setup.exe`
+- macOS: `noken-pos_1.0.0_aarch64.dmg`, `noken-pos_1.0.0_x64.dmg`
+- Linux: `noken-pos_1.0.0_amd64.deb`, `noken-pos_1.0.0_amd64.AppImage`
+- Android: `noken-pos_1.0.0_universal.apk`, `noken-pos_1.0.0_universal.aab`
+
+### Downloading Build Artifacts
+
+**From Actions Tab:**
+1. Go to the repository → Actions tab
+2. Click on a completed workflow run
+3. Scroll to "Artifacts" section
+4. Download the artifact for your platform:
+   - `noken-pos-windows-x86_64` - Windows builds
+   - `noken-pos-macos-aarch64` - macOS Apple Silicon
+   - `noken-pos-macos-x86_64` - macOS Intel
+   - `noken-pos-linux-x86_64` - Linux builds
+   - `noken-pos-android` - Android builds
+
+**From Releases:**
+1. Go to the repository → Releases
+2. Click on the latest release
+3. Download the appropriate file for your platform
+
+### Installation Instructions
+
+**Windows:**
+```bash
+# Run the MSI installer
+noken-pos_1.0.0_x64.msi
+
+# Or run the NSIS installer
+noken-pos_1.0.0_x64-setup.exe
+```
+
+**macOS:**
+```bash
+# Open the DMG and drag to Applications
+open noken-pos_1.0.0_aarch64.dmg
+```
+
+**Linux (Debian/Ubuntu):**
+```bash
+# Install DEB package
+sudo dpkg -i noken-pos_1.0.0_amd64.deb
+
+# Or run AppImage directly
+chmod +x noken-pos_1.0.0_amd64.AppImage
+./noken-pos_1.0.0_amd64.AppImage
+```
+
+**Android:**
+```bash
+# Enable "Install from Unknown Sources" in Settings
+# Then install the APK
+adb install noken-pos_1.0.0_universal.apk
+```
+
+## Development
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- pnpm (v8 or higher)
+- Rust (latest stable)
+- Tauri CLI
+
+### Install Dependencies
+
+```bash
+pnpm install
+```
+
+### Run Development Server
+
+```bash
+pnpm tauri dev
+```
+
+This will:
+1. Start the Nuxt dev server on http://localhost:3000
+2. Compile the Rust backend
+3. Launch the Tauri desktop application
+
+### Build for Production
+
+```bash
+pnpm tauri build
+```
+
 ## Database Location
 
 The SQLite database is created at:
