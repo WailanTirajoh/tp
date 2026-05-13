@@ -1,36 +1,7 @@
-use diesel::prelude::*;
+use super::entities::{NewUser, UpdateUser};
 use serde::{Deserialize, Serialize};
-use crate::schema::users;
 
-#[derive(Debug, Serialize, Deserialize, Clone, Queryable, Selectable)]
-#[diesel(table_name = users)]
-#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
-pub struct User {
-    pub id: i32,
-    pub name: String,
-    pub email: String,
-    pub age: Option<i32>,
-    pub created_at: String,
-    pub updated_at: String,
-}
-
-#[derive(Debug, Serialize, Deserialize, Insertable)]
-#[diesel(table_name = users)]
-pub struct NewUser {
-    pub name: String,
-    pub email: String,
-    pub age: Option<i32>,
-}
-
-#[derive(Debug, Serialize, Deserialize, AsChangeset)]
-#[diesel(table_name = users)]
-pub struct UpdateUser {
-    pub name: Option<String>,
-    pub email: Option<String>,
-    pub age: Option<i32>,
-}
-
-// Input types for Tauri commands (keep for API compatibility)
+/// Input DTO for creating a user
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CreateUserInput {
     pub name: String,
@@ -58,6 +29,7 @@ impl From<&CreateUserInput> for NewUser {
     }
 }
 
+/// Input DTO for updating a user
 #[derive(Debug, Serialize, Deserialize)]
 pub struct UpdateUserInput {
     pub name: Option<String>,

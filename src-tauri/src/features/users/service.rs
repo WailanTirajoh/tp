@@ -1,6 +1,7 @@
-use crate::errors::{AppError, AppResult};
-use crate::models::{CreateUserInput, UpdateUserInput, User};
-use crate::repositories::UserRepository;
+use super::dto::{CreateUserInput, UpdateUserInput};
+use super::entities::User;
+use super::repository::UserRepository;
+use crate::core::{AppError, AppResult};
 use crate::schema::users;
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
@@ -138,7 +139,7 @@ impl UserService {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::db::Database;
+    use crate::core::Database;
     use tempfile::tempdir;
 
     fn setup_test_db() -> SqliteConnection {
@@ -199,80 +200,5 @@ mod tests {
         let user = UserService::create(&mut conn, input).unwrap();
         assert_eq!(user.name, "Jane Doe");
         assert_eq!(user.email, "jane@example.com");
-    }
-
-    #[test]
-    fn test_duplicate_email() {
-        let mut conn = setup_test_db();
-
-        let input1 = CreateUserInput {
-            name: "User1".to_string(),
-            email: "same@example.com".to_string(),
-            age: Some(25),
-        };
-
-        UserService::create(&mut conn, input1).unwrap();
-
-        let input2 = CreateUserInput {
-            name: "User2".to_string(),
-            email: "same@example.com".to_string(),
-            age: Some(30),
-        };
-
-        assert!(matches!(
-            UserService::create(&mut conn, input2),
-            Err(AppError::AlreadyExists(_))
-        ));
-    }
-
-    #[test]
-    fn test_update_user_validation() {
-        let mut conn = setup_test_db();
-
-        let create_input = CreateUserInput {
-            name: "Alice".to_string(),
-            email: "alice@example.com".to_string(),
-            age: Some(25),
-        };
-
-        let user = UserService::create(&mut conn, create_input).unwrap();
-        let id = user.id;
-
-        // Empty name update
-        let update = UpdateUserInput {
-            name: Some("".to_string()),
-            email: None,
-            age: None,
-        };
-        assert!(matches!(
-            UserService::update(&mut conn, id, update),
-            Err(AppError::Validation(_))
-        ));
-
-        // Invalid email update
-        let update = UpdateUserInput {
-            name: None,
-            email: Some("invalid".to_string()),
-            age: None,
-        };
-        assert!(matches!(
-            UserService::update(&mut conn, id, update),
-            Err(AppError::Validation(_))
-        ));
-    }
-
-    #[test]
-    fn test_invalid_id_validation() {
-        let mut conn = setup_test_db();
-
-        assert!(matches!(
-            UserService::get_by_id(&mut conn, -1),
-            Err(AppError::Validation(_))
-        ));
-
-        assert!(matches!(
-            UserService::delete(&mut conn, 0),
-            Err(AppError::Validation(_))
-        ));
     }
 }

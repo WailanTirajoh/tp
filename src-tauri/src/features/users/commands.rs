@@ -1,6 +1,7 @@
-use crate::db::Database;
-use crate::models::{CreateUserInput, UpdateUserInput, User};
-use crate::services::UserService;
+use super::dto::{CreateUserInput, UpdateUserInput};
+use super::entities::User;
+use super::service::UserService;
+use crate::core::Database;
 use std::sync::Arc;
 use tauri::State;
 

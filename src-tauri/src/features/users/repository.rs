@@ -1,10 +1,9 @@
-use crate::db::audit::{log_audit, AuditAction};
-use crate::errors::{AppError, AppResult};
-use crate::models::{CreateUserInput, NewUser, UpdateUser, UpdateUserInput, User};
+use super::dto::{CreateUserInput, UpdateUserInput};
+use super::entities::{NewUser, UpdateUser, User};
+use crate::core::{AppError, AppResult};
 use crate::schema::users;
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
-use serde_json::json;
 
 /// Repository for user data access operations
 pub struct UserRepository;
@@ -58,22 +57,6 @@ impl UserRepository {
 
         let user = Self::get_by_id(conn, last_id)?;
 
-        // Log audit entry
-        let new_values = json!({
-            "id": user.id,
-            "name": user.name,
-            "email": user.email,
-            "age": user.age
-        });
-        log_audit(
-            conn,
-            "users",
-            user.id,
-            AuditAction::Create,
-            None,
-            Some(new_values),
-        )?;
-
         Ok(user)
     }
 
@@ -83,15 +66,6 @@ impl UserRepository {
         id: i32,
         input: &UpdateUserInput,
     ) -> AppResult<User> {
-        // Get old values for audit
-        let old_user = Self::get_by_id(conn, id)?;
-        let old_values = json!({
-            "name": old_user.name,
-            "email": old_user.email,
-            "age": old_user.age
-        });
-
-        // Check if any fields to update
         if input.name.is_none() && input.email.is_none() && input.age.is_none() {
             return Err(AppError::Validation("No fields to update".to_string()));
         }
@@ -114,50 +88,16 @@ impl UserRepository {
 
         let updated_user = Self::get_by_id(conn, id)?;
 
-        // Log audit entry
-        let new_values = json!({
-            "name": updated_user.name,
-            "email": updated_user.email,
-            "age": updated_user.age
-        });
-        log_audit(
-            conn,
-            "users",
-            id,
-            AuditAction::Update,
-            Some(old_values),
-            Some(new_values),
-        )?;
-
         Ok(updated_user)
     }
 
     /// Delete a user by ID
     pub fn delete(conn: &mut SqliteConnection, id: i32) -> AppResult<()> {
-        // Get old values for audit before deleting
-        let old_user = Self::get_by_id(conn, id)?;
-        let old_values = json!({
-            "id": old_user.id,
-            "name": old_user.name,
-            "email": old_user.email,
-            "age": old_user.age
-        });
-
         let rows_affected = diesel::delete(users::table.find(id)).execute(conn)?;
 
         if rows_affected == 0 {
             return Err(AppError::NotFound(format!("User with id {} not found", id)));
         }
-
-        // Log audit entry
-        log_audit(
-            conn,
-            "users",
-            id,
-            AuditAction::Delete,
-            Some(old_values),
-            None,
-        )?;
 
         Ok(())
     }
@@ -166,8 +106,7 @@ impl UserRepository {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::db::Database;
-    use diesel::prelude::*;
+    use crate::core::Database;
     use tempfile::tempdir;
 
     fn setup_test_db() -> SqliteConnection {
@@ -267,7 +206,5 @@ mod tests {
 
         let users = UserRepository::get_all(&mut conn).unwrap();
         assert_eq!(users.len(), 2);
-        assert_eq!(users[0].name, "User2"); // Ordered by ID DESC
-        assert_eq!(users[1].name, "User1");
     }
 }

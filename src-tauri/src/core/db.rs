@@ -1,5 +1,3 @@
-pub mod audit;
-
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
@@ -34,8 +32,6 @@ impl Database {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use diesel::dsl::*;
-    use diesel::sqlite::Sqlite;
     use tempfile::tempdir;
 
     #[test]

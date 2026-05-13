@@ -1,13 +1,9 @@
-mod commands;
-mod db;
-mod errors;
-mod models;
-mod repositories;
+mod core;
+mod features;
 mod schema;
-mod services;
 
-use commands::*;
-use db::Database;
+use core::Database;
+use features::{health, users};
 use std::sync::Arc;
 use tauri::Manager;
 
@@ -38,11 +34,12 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             greet,
-            get_users,
-            get_user,
-            create_user,
-            update_user,
-            delete_user
+            users::get_users,
+            users::get_user,
+            users::create_user,
+            users::update_user,
+            users::delete_user,
+            health::health_check
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
