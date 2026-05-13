@@ -1,12 +1,12 @@
 import { invoke } from "@tauri-apps/api/core";
 
 export interface User {
-  id?: number;
+  id: number;
   name: string;
   email: string;
   age?: number;
-  created_at?: string;
-  updated_at?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CreateUserInput {

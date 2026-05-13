@@ -21,6 +21,9 @@ export default defineNuxtConfig({
       // Tauri requires a consistent port
       strictPort: true,
     },
+    optimizeDeps: {
+      include: ["@tauri-apps/plugin-dialog"],
+    },
   },
 
   modules: ["@pinia/nuxt", "@pinia/colada-nuxt", "@vueuse/nuxt"],

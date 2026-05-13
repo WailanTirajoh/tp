@@ -102,7 +102,7 @@
                 Edit
               </button>
               <button
-                @click="handleDelete(user.id!)"
+                @click="handleDelete(user.id)"
                 class="text-red-600 hover:text-red-900"
               >
                 Delete
@@ -188,6 +188,7 @@
 </template>
 
 <script setup lang="ts">
+import { ask } from "@tauri-apps/plugin-dialog";
 import type { User } from "~/composables/useUsersApi";
 
 const { getUsers, createUser, updateUser, deleteUser } = useUsersApi();
@@ -255,7 +256,7 @@ const handleSubmit = async () => {
 
     if (editingUser.value) {
       // Update
-      await updateUser(editingUser.value.id!, {
+      await updateUser(editingUser.value.id, {
         name: form.value.name,
         email: form.value.email,
         age: form.value.age,
@@ -286,7 +287,12 @@ const handleSubmit = async () => {
 };
 
 const handleDelete = async (id: number) => {
-  if (!confirm("Are you sure you want to delete this user?")) {
+  const confirmed = await ask("Are you sure you want to delete this user?", {
+    title: "Confirm Delete",
+    kind: "warning",
+  });
+
+  if (!confirmed) {
     return;
   }
 
