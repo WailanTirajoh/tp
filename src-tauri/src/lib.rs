@@ -3,15 +3,9 @@ mod features;
 mod schema;
 
 use core::Database;
-use features::{health, users};
+use features::{health, storage, users};
 use std::sync::Arc;
 use tauri::Manager;
-
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -28,18 +22,36 @@ pub fn run() {
             let db_path = app_dir.join("database.sqlite");
 
             let database = Arc::new(Database::new(db_path).expect("Failed to initialize database"));
+
+            // Initialize reactive storage manager
+            let storage_manager = Arc::new(storage::StorageManager::new(app.handle().clone()));
+
+            // Load existing documents from SQLite into memory
+            if let Ok(documents) = storage::repository::StorageRepository::load_all(&database) {
+                storage_manager.load_documents(documents);
+                println!(
+                    "Loaded {} documents into memory",
+                    storage_manager.get_all().len()
+                );
+            }
+
             app.manage(database);
+            app.manage(storage_manager);
 
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            greet,
             users::get_users,
             users::get_user,
             users::create_user,
             users::update_user,
             users::delete_user,
-            health::health_check
+            health::health_check,
+            storage::storage_get,
+            storage::storage_set,
+            storage::storage_delete,
+            storage::storage_query_collection,
+            storage::storage_keys,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

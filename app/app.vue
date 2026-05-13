@@ -7,6 +7,9 @@
         <div class="space-x-4">
           <NuxtLink to="/" class="hover:text-gray-300">Home</NuxtLink>
           <NuxtLink to="/users" class="hover:text-gray-300">Users</NuxtLink>
+          <NuxtLink to="/storage-demo" class="hover:text-gray-300"
+            >Storage Demo</NuxtLink
+          >
         </div>
       </div>
     </nav>
