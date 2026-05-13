@@ -3,14 +3,7 @@
     <NuxtRouteAnnouncer />
     <nav class="bg-gray-800 text-white p-4">
       <div class="container mx-auto flex items-center justify-between">
-        <h1 class="text-xl font-bold">Noken POS</h1>
-        <div class="space-x-4">
-          <NuxtLink to="/" class="hover:text-gray-300">Home</NuxtLink>
-          <NuxtLink to="/users" class="hover:text-gray-300">Users</NuxtLink>
-          <NuxtLink to="/storage-demo" class="hover:text-gray-300"
-            >Storage Demo</NuxtLink
-          >
-        </div>
+        <h1 class="text-xl font-bold">Nuxt Tauri</h1>
       </div>
     </nav>
     <NuxtPage />

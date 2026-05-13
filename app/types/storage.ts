@@ -90,9 +90,9 @@ export interface StorageRegistry {
 }
 
 /**
- * Return type for useRustStorage composable
+ * Return type for useDocumentStorage composable
  */
-export interface UseRustStorageReturn<T> {
+export interface UseDocumentStorageReturn<T> {
   /**
    * Reactive ref to the storage value
    */

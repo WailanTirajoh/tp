@@ -1,12 +1,12 @@
 /**
- * Reactive Storage Composable - useRustStorage
+ * Reactive Document Storage Composable - useDocumentStorage
  *
  * Provides VueUse-style localStorage-like API backed by Rust reactive storage
  * with automatic SQLite persistence.
  *
  * Example:
  * ```ts
- * const user = useRustStorage<User>('user', { name: 'Guest' })
+ * const user = useDocumentStorage<User>('user', { name: 'Guest' })
  *
  * // Automatically syncs to Rust and persists to SQLite
  * user.value.name = 'Wailan'
@@ -27,14 +27,14 @@ import type {
 import { storageRegistry, WINDOW_ID } from "@/utils/storageRegistry";
 
 /**
- * Reactive Rust storage composable
+ * Reactive document storage composable
  *
- * @param key - Unique storage key
+ * @param key - Unique document key
  * @param initialValue - Default value if key doesn't exist
  * @param options - Storage options
  * @returns Reactive ref synced with Rust storage
  */
-export function useRustStorage<T>(
+export function useDocumentStorage<T>(
   key: string,
   initialValue?: T,
   options: StorageOptions = {},
@@ -58,7 +58,7 @@ export function useRustStorage<T>(
   // Error handler
   const handleError = (error: unknown, context: string) => {
     const err = error instanceof Error ? error : new Error(String(error));
-    console.error(`[useRustStorage] ${context} "${key}":`, err);
+    console.error(`[useDocumentStorage] ${context} "${key}":`, err);
     if (onError) onError(err);
   };
 
@@ -118,7 +118,7 @@ export function useRustStorage<T>(
           }
 
           console.log(
-            `[useRustStorage] Synced "${key}" from ${changeEvent.origin}`,
+            `[useDocumentStorage] Synced "${key}" from ${changeEvent.origin}`,
           );
         },
       );
@@ -178,9 +178,9 @@ export function useRustStorage<T>(
 }
 
 /**
- * Remove a key from storage
+ * Remove a document from storage
  */
-export async function removeRustStorage(key: string): Promise<void> {
+export async function removeDocument(key: string): Promise<void> {
   try {
     const currentVersion = storageRegistry.getVersion(key);
 
@@ -196,36 +196,36 @@ export async function removeRustStorage(key: string): Promise<void> {
     storageRegistry.removeVersion(key);
     storageRegistry.removeListener(key);
   } catch (error) {
-    console.error(`[removeRustStorage] Failed to remove "${key}":`, error);
+    console.error(`[removeDocument] Failed to remove "${key}":`, error);
     throw error;
   }
 }
 
 /**
- * Get all storage keys (for debugging)
+ * Get all document keys (for debugging)
  */
-export async function getRustStorageKeys(): Promise<string[]> {
+export async function getDocumentKeys(): Promise<string[]> {
   try {
     return await invoke<string[]>("storage_keys");
   } catch (error) {
-    console.error("[getRustStorageKeys] Failed:", error);
+    console.error("[getDocumentKeys] Failed:", error);
     return [];
   }
 }
 
 /**
- * Clear all storage (for testing)
+ * Clear all documents (for testing)
  */
-export async function clearRustStorage(): Promise<void> {
+export async function clearDocumentStorage(): Promise<void> {
   if (import.meta.env.PROD) {
-    throw new Error("clearRustStorage is not available in production");
+    throw new Error("clearDocumentStorage is not available in production");
   }
 
   try {
     await invoke("storage_clear");
     storageRegistry.clear();
   } catch (error) {
-    console.error("[clearRustStorage] Failed:", error);
+    console.error("[clearDocumentStorage] Failed:", error);
     throw error;
   }
 }

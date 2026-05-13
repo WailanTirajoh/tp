@@ -3,7 +3,7 @@ mod features;
 mod schema;
 
 use core::Database;
-use features::{health, storage, users};
+use features::storage;
 use std::sync::Arc;
 use tauri::Manager;
 
@@ -41,12 +41,6 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
-            users::get_users,
-            users::get_user,
-            users::create_user,
-            users::update_user,
-            users::delete_user,
-            health::health_check,
             storage::storage_get,
             storage::storage_set,
             storage::storage_delete,
