@@ -1,6 +1,26 @@
 {
-  "name": "noken-pos",
-  "private": true,
+  "name": "nuxt-tauri-boilerplate",
+  "version": "1.0.0",
+  "description": "A production-ready boilerplate for building cross-platform desktop applications with Nuxt 3 and Tauri 2",
+  "author": "Your Name",
+  "license": "MIT",
+  "keywords": [
+    "tauri",
+    "nuxt",
+    "vue3",
+    "typescript",
+    "rust",
+    "desktop-app",
+    "boilerplate",
+    "starter-template",
+    "reactive-storage",
+    "sqlite"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/nuxt-tauri-boilerplate"
+  },
+  "private": false,
   "version": "0.1.0",
   "type": "module",
   "scripts": {
